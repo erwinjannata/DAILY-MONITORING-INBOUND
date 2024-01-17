@@ -119,7 +119,7 @@ def combine_process():
             target_workbook.close()
             app.quit()
             showinfo(title="Message",
-                     message="Program mengalami masalah, silahkan hubungi tim IT")
+                     message="Program mengalami masalah, silahkan hubungi tim IT.")
     elif not file_data:
         showinfo(title="Message",
                  message="Tidak ada file data dipilih!")
