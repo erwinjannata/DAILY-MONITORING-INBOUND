@@ -3,6 +3,7 @@ import tkinter as tk
 from tkinter import filedialog, ttk
 from tkinter.messagebox import showinfo
 from tkcalendar import DateEntry
+from math import ceil
 import threading
 import re
 import os
@@ -108,8 +109,9 @@ def combine_process():
                     target_worksheet.range(f"D{cell_row}").expand(
                         "table").paste(paste="values")
 
-                target_workbook.save()
+                progressbar['value'] = ceil(8.3 * (i+1))
 
+            target_workbook.save()
             source_workbook.close()
             target_workbook.close()
             app.quit()
@@ -139,7 +141,7 @@ def start_combine_thread(event):
     global combine_thread
     combine_thread = threading.Thread(target=combine_process)
     combine_thread.daemon = True
-    progressbar.start()
+    # progressbar.start()
     btn1.state(['disabled'])
     btn2.state(['disabled'])
     combine_btn.state(['disabled'])
@@ -189,7 +191,7 @@ combine_btn = ttk.Button(root, text="Gabungkan",
                          command=lambda: start_combine_thread(None), state=tk.NORMAL)
 combine_btn.pack(fill="x", padx=10, pady=10)
 
-progressbar = ttk.Progressbar(root, mode='indeterminate')
+progressbar = ttk.Progressbar(root, mode='determinate', orient='horizontal')
 progressbar.pack(fill='x', padx=10, pady=10)
 
 root.mainloop()
