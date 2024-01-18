@@ -11,7 +11,7 @@ root = tk.Tk()
 root.iconbitmap(r'D:\JNE\PROGRAM\DAILY MONITORING INBOUND\imgs\jne.ico')
 root.configure(bg="white")
 root.geometry("350x360")
-root.title("Penggabung Data Monitoring")
+root.title("Combine Data Monitoring")
 
 file_data = ""
 file_report = ""
