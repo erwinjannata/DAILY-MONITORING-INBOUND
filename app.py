@@ -46,8 +46,6 @@ def load_master_report():
 
 
 def combine_process():
-    saved_as = filedialog.asksaveasfilename(defaultextension=".xlsx", filetypes=[
-                                            ("Excel Workbook (.xlsx)", "*.xlsx")])
     date = calendar.get().split('/')
     tanggal = int(date[0])
 
@@ -56,6 +54,8 @@ def combine_process():
 
     if file_data and file_report:
         app = xl.App(visible=False)
+        saved_as = filedialog.asksaveasfilename(defaultextension=".xlsx", filetypes=[
+                                                ("Excel Workbook (.xlsx)", "*.xlsx")])
         source_workbook = xl.Book(file_data)
         target_workbook = xl.Book(file_report)
 
