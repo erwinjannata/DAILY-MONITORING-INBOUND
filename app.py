@@ -46,16 +46,16 @@ def load_master_report():
 
 
 def combine_process():
+    saved_as = filedialog.asksaveasfilename(defaultextension=".xlsx", filetypes=[
+                                            ("Excel Workbook (.xlsx)", "*.xlsx")])
     date = calendar.get().split('/')
     tanggal = int(date[0])
 
     if tanggal > 16:
         tanggal = 16
 
-    if file_data and file_report:
+    if (file_data and file_report) and saved_as:
         app = xl.App(visible=False)
-        saved_as = filedialog.asksaveasfilename(defaultextension=".xlsx", filetypes=[
-                                                ("Excel Workbook (.xlsx)", "*.xlsx")])
         source_workbook = xl.Book(file_data)
         target_workbook = xl.Book(file_report)
 
@@ -131,6 +131,9 @@ def combine_process():
     elif not file_report:
         showinfo(title="Message",
                  message="Tidak ada file master dipilih!")
+    elif not saved_as:
+        showinfo(title="Message",
+                 message="Pilih lokasi penyimpanan file yang valid")
     else:
         showinfo(title="Message",
                  message="Cek kembali excel yang dipilih!")
