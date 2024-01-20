@@ -46,6 +46,8 @@ def load_master_report():
 
 
 def combine_process():
+    saved_as = filedialog.asksaveasfilename(defaultextension=".xlsx", filetypes=[
+                                            ("Excel Workbook (.xlsx)", "*.xlsx")])
     date = calendar.get().split('/')
     tanggal = int(date[0])
 
@@ -111,7 +113,7 @@ def combine_process():
 
                 progressbar['value'] = ceil(8.3 * (i+1))
 
-            target_workbook.save()
+            target_workbook.save(saved_as)
             source_workbook.close()
             target_workbook.close()
             app.quit()
@@ -141,7 +143,6 @@ def start_combine_thread(event):
     global combine_thread
     combine_thread = threading.Thread(target=combine_process)
     combine_thread.daemon = True
-    # progressbar.start()
     btn1.state(['disabled'])
     btn2.state(['disabled'])
     combine_btn.state(['disabled'])
