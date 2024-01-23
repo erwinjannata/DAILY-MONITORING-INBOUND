@@ -54,7 +54,7 @@ def combine_process():
     if tanggal > 16:
         tanggal = 16
 
-    if (file_data and file_report) and saved_as:
+    if (os.path.exists(file_data) and os.path.exists(file_report)) and saved_as:
         app = xl.App(visible=False)
 
         try:
