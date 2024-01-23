@@ -56,10 +56,14 @@ def combine_process():
 
     if (file_data and file_report) and saved_as:
         app = xl.App(visible=False)
-        source_workbook = xl.Book(file_data)
-        target_workbook = xl.Book(file_report)
 
         try:
+            os.rename(file_report, file_report)
+
+            global source_workbook, target_workbook
+            source_workbook = xl.Book(file_data)
+            target_workbook = xl.Book(file_report)
+
             for i in range(0, 12):
                 source_worksheet = source_workbook.sheets[i+1]
                 target_worksheet = target_workbook.sheets[i]
@@ -119,6 +123,10 @@ def combine_process():
             app.quit()
             showinfo(title="Message",
                      message="Proses selesai")
+        except OSError:
+            app.quit()
+            showinfo(title="Message",
+                     message="File excel sedang dibuka / digunakan oleh proses lain.")
         except Exception as e:
             source_workbook.close()
             target_workbook.close()
