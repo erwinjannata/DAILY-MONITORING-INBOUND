@@ -1,17 +1,15 @@
-import xlwings as xl
 import tkinter as tk
 from tkinter import filedialog, ttk
 from tkinter.messagebox import showinfo
 from tkcalendar import DateEntry
-from math import ceil
 import threading
-import re
 import os
+from subpackage.fungsi import gabung_cabang, gabung_customer
 
 root = tk.Tk()
 root.iconbitmap(r'D:\JNE\PROGRAM\DAILY MONITORING INBOUND\imgs\jne.ico')
 root.configure(bg="white")
-root.geometry("350x360")
+root.geometry("350x425")
 root.title("Combine Data Monitoring")
 
 file_data = ""
@@ -19,12 +17,7 @@ file_report = ""
 
 file_data_name = tk.StringVar()
 file_report_name = tk.StringVar()
-
-column_data1 = ['F', 'S', 'AF', 'AS', 'BF', 'BS', 'CF', 'CS',
-                'DF', 'DS', 'EF', 'ES', 'FF', 'FS', 'GF', 'GS']
-
-column_data2 = ['R', 'AE', 'AR', 'BE', 'BR', 'CE', 'CR',
-                'DE', 'DR', 'EE', 'ER', 'FE', 'FR', 'GE', 'GR', 'HE']
+mode = tk.StringVar()
 
 
 def load_data():
@@ -46,93 +39,22 @@ def load_master_report():
 
 
 def combine_process():
+    mode = combo_box.current()
     saved_as = filedialog.asksaveasfilename(defaultextension=".xlsx", filetypes=[
                                             ("Excel Workbook (.xlsx)", "*.xlsx")])
-    date = calendar.get().split('/')
-    tanggal = int(date[0])
-
-    if tanggal > 16:
-        tanggal = 16
+    date = calendar.get()
 
     if (os.path.exists(file_data) and os.path.exists(file_report)) and saved_as:
-        app = xl.App(visible=False)
-
-        try:
-            os.rename(file_report, file_report)
-
-            global source_workbook, target_workbook
-            source_workbook = xl.Book(file_data)
-            target_workbook = xl.Book(file_report)
-
-            for i in range(0, 12):
-                source_worksheet = source_workbook.sheets[i+1]
-                target_worksheet = target_workbook.sheets[i]
-
-                global max_row
-                max_row = int(re.findall(
-                    r'\d+', (target_worksheet.range("C4").end("down").address))[0])
-
-                for idx, cell_column1 in enumerate(column_data1[0:tanggal]):
-                    cell = target_worksheet.range(f"{cell_column1}4")
-                    if cell.value is None:
-                        cell_row = 4
-                    else:
-                        cell_row = int(re.findall(
-                            r'\d+', (cell.end('down').address))[0]) + 1
-
-                    if source_worksheet.range(f"{cell_column1}4").value is None:
-                        col1 = int(re.findall(r'\d+', source_worksheet.range(f"{cell_column1}4").end('down').get_address(
-                            row_absolute=False, column_absolute=False, include_sheetname=False, external=False))[0])
-                    else:
-                        col1 = 4
-
-                    col2 = int(re.findall(r'\d+', source_worksheet.range(f'{cell_column1}{col1}').end('down').get_address(
-                        row_absolute=False, column_absolute=False, include_sheetname=False, external=False))[0])
-
-                    # proses copy
-                    if cell_row <= max_row:
-                        source_worksheet.range(
-                            f"{cell_column1}{col1}:{column_data2[idx]}{col2}").expand("down").copy()
-                        target_worksheet.range(f"{cell_column1}{cell_row}").expand(
-                            "table").paste(paste="values")
-
-                        target_worksheet.api.Application.CutCopyMode = False
-                    else:
-                        continue
-
-                if target_worksheet.range("D4").value is None:
-                    cell_row = 4
-                else:
-                    cell_row = int(re.findall(
-                        r'\d+', (target_worksheet.range("D4").end('down').address))[0]) + 1
-
-                col1 = int(re.findall(r'\d+', source_worksheet.range("F4").end('down').get_address(
-                    row_absolute=False, column_absolute=False, include_sheetname=False, external=False))[0])
-
-                if cell_row <= max_row:
-                    source_worksheet.range(
-                        f"D{col1}:E{max_row}").expand("down").copy()
-                    target_worksheet.range(f"D{cell_row}").expand(
-                        "table").paste(paste="values")
-
-                progressbar['value'] = ceil(8.3 * (i+1))
-
-            target_workbook.save(saved_as)
-            source_workbook.close()
-            target_workbook.close()
-            app.quit()
+        progressbar.start()
+        if mode == 0:
+            gabung_cabang(file_data=file_data,
+                          file_report=file_report, tgl=date, saved_as=saved_as)
+        elif mode == 1:
+            gabung_customer(file_data=file_data,
+                            file_report=file_report, tgl=date, saved_as=saved_as)
+        else:
             showinfo(title="Message",
-                     message="Proses selesai")
-        except OSError:
-            app.quit()
-            showinfo(title="Message",
-                     message="File excel sedang dibuka / digunakan oleh proses lain.")
-        except Exception as e:
-            source_workbook.close()
-            target_workbook.close()
-            app.quit()
-            showinfo(title="Message",
-                     message="Program mengalami masalah, silahkan hubungi tim IT.")
+                     message="Pilihan jenis report tidak valid")
     elif not file_data:
         showinfo(title="Message",
                  message="Tidak ada file data dipilih!")
@@ -169,12 +91,18 @@ def check_combine_thread():
 
 
 # GUI
-calendar = DateEntry(root, selectmode='day', locale='en_US',
-                     date_pattern='dd/MM/yyyy', weekendbackground='white', weekendforeground='black')
+combo_label = ttk.Label(root, text="Jenis Report",
+                        background="white").pack(fill="x", padx=10, pady=5)
+combo_box = ttk.Combobox(root, textvariable=mode)
+combo_box['value'] = ('Cabang', 'Customer')
+combo_box.pack(pady=10, padx=10, fill='both')
+combo_box.current(0)
 
 label1 = ttk.Label(root, text="1. Tanggal Data", background="white").pack(
     fill="x", padx=10, pady=5)
 
+calendar = DateEntry(root, selectmode='day', locale='en_US',
+                     date_pattern='MM/dd/yyyy', weekendbackground='white', weekendforeground='black')
 calendar.pack(pady=10, padx=10, fill='both')
 
 label2 = ttk.Label(root, text="2. Pilih file Excel Rumus & Data", background="white").pack(
@@ -203,7 +131,7 @@ combine_btn = ttk.Button(root, text="Gabungkan",
                          command=lambda: start_combine_thread(None), state=tk.NORMAL)
 combine_btn.pack(fill="x", padx=10, pady=10)
 
-progressbar = ttk.Progressbar(root, mode='determinate', orient='horizontal')
+progressbar = ttk.Progressbar(root, mode='indeterminate', orient='horizontal')
 progressbar.pack(fill='x', padx=10, pady=10)
 
 root.mainloop()
