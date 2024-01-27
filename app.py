@@ -102,7 +102,7 @@ label1 = ttk.Label(root, text="1. Tanggal Data", background="white").pack(
     fill="x", padx=10, pady=5)
 
 calendar = DateEntry(root, selectmode='day', locale='en_US',
-                     date_pattern='MM/dd/yyyy', weekendbackground='white', weekendforeground='black')
+                     date_pattern='M/d/yyyy', weekendbackground='white', weekendforeground='black')
 calendar.pack(pady=10, padx=10, fill='both')
 
 label2 = ttk.Label(root, text="2. Pilih file Excel Rumus & Data", background="white").pack(
