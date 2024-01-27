@@ -28,14 +28,17 @@ def gabung_cabang(file_data, file_report, tgl, saved_as):
             source_worksheet = source_workbook.sheets[i+1]
             target_worksheet = target_workbook.sheets[i]
 
-            global max_row
+            global max_row, merged
             max_row = int(re.findall(
                 r'\d+', (target_worksheet.range("C4").end("down").address))[0])
+
+            merged = target_worksheet.range("A4").merge_area.count
 
             for idx, cell_column1 in enumerate(cabang_col1[0:tanggal]):
                 first_row = target_worksheet.range(f"{cell_column1}4")
                 last_row = target_worksheet.range(f"{cell_column1}{max_row}")
-                if first_row.value is None:
+
+                if first_row.value is None and target_worksheet.range(f"{cell_column1}{4 + merged}").value is None:
                     cell_row = 4
                 else:
                     cell_row = int(re.findall(
@@ -51,7 +54,7 @@ def gabung_cabang(file_data, file_report, tgl, saved_as):
                     row_absolute=False, column_absolute=False, include_sheetname=False, external=False))[0])
 
                 # proses copy
-                if (cell_row <= max_row) and cell_row != 5:
+                if (cell_row <= max_row) and target_worksheet.range(f"{cell_column1}{cell_row}").value is None:
                     source_worksheet.range(
                         f"{cell_column1}{col1}:{cabang_col2[idx]}{col2}").expand("down").copy()
                     target_worksheet.range(f"{cell_column1}{cell_row}").expand(
@@ -61,7 +64,7 @@ def gabung_cabang(file_data, file_report, tgl, saved_as):
                 else:
                     continue
 
-            if target_worksheet.range("D4").value is None:
+            if target_worksheet.range("D4").value is None and target_worksheet.range(f"C{4 + merged}").value is None:
                 cell_row = 4
             else:
                 cell_row = int(re.findall(
@@ -70,7 +73,7 @@ def gabung_cabang(file_data, file_report, tgl, saved_as):
             col1 = int(re.findall(r'\d+', source_worksheet.range("F4").end('down').get_address(
                 row_absolute=False, column_absolute=False, include_sheetname=False, external=False))[0])
 
-            if (cell_row < max_row) and cell_row != 5:
+            if (cell_row < max_row) and target_worksheet.range(f"D{cell_row}").value is None:
                 source_worksheet.range(
                     f"D{col1}:E{max_row}").expand("down").copy()
                 target_worksheet.range(f"D{cell_row}").expand(
@@ -117,15 +120,17 @@ def gabung_customer(file_data, file_report, tgl, saved_as):
             source_worksheet = source_workbook.sheets[i]
             target_worksheet = target_workbook.sheets[i]
 
-            global max_row
+            global max_row, merged
             max_row = int(re.findall(
                 r'\d+', (target_worksheet.range("B5").end("down").address))[0])
+
+            merged = target_worksheet.range("A5").merge_area.count
 
             for idx, cell_column1 in enumerate(customer_col1[0:tanggal]):
                 first_row = target_worksheet.range(f"{cell_column1}5")
                 last_row = target_worksheet.range(f"{cell_column1}{max_row}")
 
-                if first_row.value is None:
+                if first_row.value is None and target_worksheet.range(f"{cell_column1}{5 + merged}").value is None:
                     cell_row = 5
                 else:
                     cell_row = int(re.findall(
@@ -141,7 +146,7 @@ def gabung_customer(file_data, file_report, tgl, saved_as):
                     row_absolute=False, column_absolute=False, include_sheetname=False, external=False))[0])
 
                 # proses copy
-                if (cell_row < max_row) and (cell_row != 6):
+                if (cell_row < max_row) and target_worksheet.range(f"{cell_column1}{cell_row}").value is None:
                     source_worksheet.range(
                         f"{cell_column1}{col1}:{customer_col2[idx]}{col2}").expand("down").copy()
                     target_worksheet.range(f"{cell_column1}{cell_row}").expand(
@@ -151,7 +156,7 @@ def gabung_customer(file_data, file_report, tgl, saved_as):
                 else:
                     continue
 
-            if target_worksheet.range("C5").value is None:
+            if target_worksheet.range("C5").value is None and target_worksheet.range(f"C{5 + merged}").value is None:
                 cell_row = 5
             else:
                 cell_row = int(re.findall(
@@ -160,24 +165,24 @@ def gabung_customer(file_data, file_report, tgl, saved_as):
             col1 = int(re.findall(r'\d+', source_worksheet.range("E5").end('down').get_address(
                 row_absolute=False, column_absolute=False, include_sheetname=False, external=False))[0])
 
-            if (cell_row < max_row) and (cell_row != 6):
+            if (cell_row < max_row) and target_worksheet.range(f"C{cell_row}").value is None:
                 source_worksheet.range(
                     f"C{col1}:D{max_row}").expand("table").copy()
-                target_worksheet.range(f"C{cell_row}:D{cell_row}").expand(
+                target_worksheet.range(f"C{cell_row}").expand(
                     "table").paste(paste="values")
 
         if tanggal >= 11:
             for i in range(5, 10):
                 source_worksheet = source_workbook.sheets[i]
-                target_worksheet = target_workbook.sheets[i]
+                target_worksheet = target_workbook.sheets[i-5]
 
-                if target_worksheet.range("DK5").value is None:
+                if target_worksheet.range("DK5").value is None and target_worksheet.range(f"DK{5 + merged}").value is None:
                     cell_row = 5
                 else:
                     cell_row = int(re.findall(
                         r'\d+', (target_worksheet.range(f"DK{max_row}").end('up').address))[0])+1
 
-                if (cell_row < max_row) and (cell_row != 6):
+                if (cell_row < max_row) and target_worksheet.range(f"DK{cell_row}").value is None:
                     if i == 9:
                         source_worksheet.range("C5").expand('table').copy()
                     else:
