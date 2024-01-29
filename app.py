@@ -9,7 +9,7 @@ from subpackage.fungsi import gabung_cabang, gabung_customer
 root = tk.Tk()
 root.iconbitmap(r'D:\JNE\PROGRAM\DAILY MONITORING INBOUND\imgs\jne.ico')
 root.configure(bg="white")
-root.geometry("350x425")
+root.geometry("350x475")
 root.title("Combine Data Monitoring")
 
 file_data = ""
@@ -18,6 +18,7 @@ file_report = ""
 file_data_name = tk.StringVar()
 file_report_name = tk.StringVar()
 mode = tk.StringVar()
+is_blank = tk.IntVar()
 
 
 def load_data():
@@ -48,10 +49,10 @@ def combine_process():
         progressbar.start()
         if mode == 0:
             gabung_cabang(file_data=file_data,
-                          file_report=file_report, tgl=date, saved_as=saved_as)
+                          file_report=file_report, tgl=date, saved_as=saved_as, is_blank=is_blank.get())
         elif mode == 1:
             gabung_customer(file_data=file_data,
-                            file_report=file_report, tgl=date, saved_as=saved_as)
+                            file_report=file_report, tgl=date, saved_as=saved_as, is_blank=is_blank.get())
         else:
             showinfo(title="Message",
                      message="Pilihan jenis report tidak valid")
@@ -67,8 +68,11 @@ def combine_process():
     else:
         showinfo(title="Message",
                  message="Cek kembali excel yang dipilih!")
+    combo_box.state(['!disabled'])
+    calendar.state(['!disabled'])
     btn1.state(['!disabled'])
     btn2.state(['!disabled'])
+    check_label.config(state="normal")
     combine_btn.state(['!disabled'])
 
 
@@ -76,8 +80,11 @@ def start_combine_thread(event):
     global combine_thread
     combine_thread = threading.Thread(target=combine_process)
     combine_thread.daemon = True
+    combo_box.state(['disabled'])
+    calendar.state(['disabled'])
     btn1.state(['disabled'])
     btn2.state(['disabled'])
+    check_label.config(state="disabled")
     combine_btn.state(['disabled'])
     combine_thread.start()
     root.after(20, check_combine_thread)
@@ -91,21 +98,22 @@ def check_combine_thread():
 
 
 # GUI
-combo_label = ttk.Label(root, text="Jenis Report",
-                        background="white").pack(fill="x", padx=10, pady=5)
+combo_label = ttk.Label(root, text="1. Jenis Report",
+                        background="white", font="calibri 11 bold").pack(fill="x", padx=10, pady=5)
 combo_box = ttk.Combobox(root, textvariable=mode)
-combo_box['value'] = ('Cabang', 'Customer')
+combo_box['value'] = ('Daily Monitoring per Cabang',
+                      'Daily Monitoring per Customer')
 combo_box.pack(pady=10, padx=10, fill='both')
 combo_box.current(0)
 
-label1 = ttk.Label(root, text="1. Tanggal Data", background="white").pack(
+label1 = ttk.Label(root, text="2. Tanggal Tarikan Data", background="white", font="calibri 11 bold").pack(
     fill="x", padx=10, pady=5)
 
 calendar = DateEntry(root, selectmode='day', locale='en_US',
                      date_pattern='M/d/yyyy', weekendbackground='white', weekendforeground='black')
 calendar.pack(pady=10, padx=10, fill='both')
 
-label2 = ttk.Label(root, text="2. Pilih file Excel Rumus & Data", background="white").pack(
+label2 = ttk.Label(root, text="3. Pilih file Excel Rumus", background="white", font="calibri 11 bold").pack(
     fill="x", padx=10, pady=5)
 
 label_name1 = ttk.Label(root, textvariable=file_data_name, background="white").pack(
@@ -114,7 +122,7 @@ label_name1 = ttk.Label(root, textvariable=file_data_name, background="white").p
 btn1 = ttk.Button(root, text="Pilih File", command=load_data, state=tk.NORMAL)
 btn1.pack(fill="x", padx=10, pady=5)
 
-label3 = ttk.Label(root, text="3. Pilih file Excel Report", background="white").pack(
+label3 = ttk.Label(root, text="4. Pilih file Excel Report", background="white", font="calibri 11 bold").pack(
     fill="x", padx=10, pady=5)
 
 label_name2 = ttk.Label(root, textvariable=file_report_name, background="white").pack(
@@ -123,6 +131,10 @@ label_name2 = ttk.Label(root, textvariable=file_report_name, background="white")
 btn2 = ttk.Button(root, text="Pilih File",
                   command=load_master_report, state=tk.NORMAL)
 btn2.pack(fill="x", padx=10, pady=5)
+
+check_label = tk.Checkbutton(
+    root, text="Tarikan sebelumnya kosong", background="white", variable=is_blank, onvalue=1, offvalue=0)
+check_label.pack(pady=5, padx=10, anchor="w")
 
 separator = ttk.Separator(root, orient='horizontal').pack(
     fill='x', pady=5, padx=10)

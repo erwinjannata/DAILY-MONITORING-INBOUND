@@ -10,7 +10,7 @@ cabang_col2 = ['R', 'AE', 'AR', 'BE', 'BR', 'CE', 'CR',
                'DE', 'DR', 'EE', 'ER', 'FE', 'FR', 'GE', 'GR', 'HE']
 
 
-def gabung_cabang(file_data, file_report, tgl, saved_as):
+def gabung_cabang(file_data, file_report, tgl, saved_as, is_blank):
     tanggal = int(tgl.split('/')[1])
 
     if tanggal > 16:
@@ -38,12 +38,17 @@ def gabung_cabang(file_data, file_report, tgl, saved_as):
                 first_row = target_worksheet.range(f"{cell_column1}4")
                 last_row = target_worksheet.range(f"{cell_column1}{max_row}")
 
+                # Lacak data yang akan di copy
                 if first_row.value is None and target_worksheet.range(f"{cell_column1}{4 + merged}").value is None:
                     cell_row = 4
                 else:
                     cell_row = int(re.findall(
                         r'\d+', (last_row.end('up').address))[0]) + 1
 
+                if is_blank == 1:
+                    cell_row += merged
+
+                # Lacak lokasi paste
                 if source_worksheet.range(f"{cell_column1}4").value is None:
                     col1 = int(re.findall(r'\d+', source_worksheet.range(f"{cell_column1}4").end('down').get_address(
                         row_absolute=False, column_absolute=False, include_sheetname=False, external=False))[0])
@@ -55,6 +60,9 @@ def gabung_cabang(file_data, file_report, tgl, saved_as):
 
                 # proses copy
                 if (cell_row <= max_row) and target_worksheet.range(f"{cell_column1}{cell_row}").value is None:
+                    if (is_blank == 1 and idx == (tanggal-1)) and first_row.value is None:
+                        cell_row = 4
+
                     source_worksheet.range(
                         f"{cell_column1}{col1}:{cabang_col2[idx]}{col2}").expand("down").copy()
                     target_worksheet.range(f"{cell_column1}{cell_row}").expand(
@@ -64,20 +72,25 @@ def gabung_cabang(file_data, file_report, tgl, saved_as):
                 else:
                     continue
 
-            if target_worksheet.range("D4").value is None and target_worksheet.range(f"C{4 + merged}").value is None:
+            if target_worksheet.range("D4").value is None and target_worksheet.range(f"D{4 + merged}").value is None:
                 cell_row = 4
             else:
                 cell_row = int(re.findall(
                     r'\d+', (target_worksheet.range(f"D{max_row}").end('up').address))[0]) + 1
 
+            if is_blank == 1:
+                cell_row += merged
+
             col1 = int(re.findall(r'\d+', source_worksheet.range("F4").end('down').get_address(
                 row_absolute=False, column_absolute=False, include_sheetname=False, external=False))[0])
 
-            if (cell_row < max_row) and target_worksheet.range(f"D{cell_row}").value is None:
+            if (cell_row <= max_row) and target_worksheet.range(f"D{cell_row}").value is None:
                 source_worksheet.range(
                     f"D{col1}:E{max_row}").expand("down").copy()
                 target_worksheet.range(f"D{cell_row}").expand(
                     "table").paste(paste="values")
+
+                target_worksheet.api.Application.CutCopyMode = False
 
         target_workbook.save(saved_as)
         source_workbook.close()
@@ -102,11 +115,16 @@ customer_col1 = ['E', 'P', 'AA', 'AL', 'AW', 'BH', 'BS', 'CD', 'CO', 'CZ']
 customer_col2 = ['O', 'Z', 'AK', 'AV', 'BG', 'BR', 'CC', 'CN', 'CY', 'DJ']
 
 
-def gabung_customer(file_data, file_report, tgl, saved_as):
+def gabung_customer(file_data, file_report, tgl, saved_as, is_blank):
     tanggal = int(tgl.split('/')[1])
+    real_date = tanggal
 
-    if tanggal > 11:
-        tanggal = 11
+    if tanggal > 15:
+        tanggal = 10
+    elif tanggal <= 15 and tanggal > 10:
+        tanggal = 9
+    elif tanggal <= 10 and tanggal > 7:
+        tanggal = 8
 
     app = xl.App(visible=False)
     try:
@@ -136,6 +154,9 @@ def gabung_customer(file_data, file_report, tgl, saved_as):
                     cell_row = int(re.findall(
                         r'\d+', (last_row.end('up').address))[0])+1
 
+                if is_blank == 1:
+                    cell_row += merged
+
                 if source_worksheet.range(f"{cell_column1}5").value is None:
                     col1 = int(re.findall(r'\d+', source_worksheet.range(f"{cell_column1}5").end('down').get_address(
                         row_absolute=False, column_absolute=False, include_sheetname=False, external=False))[0])
@@ -146,7 +167,11 @@ def gabung_customer(file_data, file_report, tgl, saved_as):
                     row_absolute=False, column_absolute=False, include_sheetname=False, external=False))[0])
 
                 # proses copy
-                if (cell_row < max_row) and target_worksheet.range(f"{cell_column1}{cell_row}").value is None:
+                if (cell_row <= max_row) and target_worksheet.range(f"{cell_column1}{cell_row}").value is None:
+                    if (is_blank == 1 and idx == (tanggal-1)) and first_row.value is None:
+                        if idx <= 7:
+                            cell_row = 5
+
                     source_worksheet.range(
                         f"{cell_column1}{col1}:{customer_col2[idx]}{col2}").expand("down").copy()
                     target_worksheet.range(f"{cell_column1}{cell_row}").expand(
@@ -162,16 +187,21 @@ def gabung_customer(file_data, file_report, tgl, saved_as):
                 cell_row = int(re.findall(
                     r'\d+', (target_worksheet.range(f"C{max_row}").end('up').address))[0])+1
 
+            if is_blank == 1:
+                cell_row += merged
+
             col1 = int(re.findall(r'\d+', source_worksheet.range("E5").end('down').get_address(
                 row_absolute=False, column_absolute=False, include_sheetname=False, external=False))[0])
 
-            if (cell_row < max_row) and target_worksheet.range(f"C{cell_row}").value is None:
+            if (cell_row <= max_row) and target_worksheet.range(f"C{cell_row}").value is None:
                 source_worksheet.range(
                     f"C{col1}:D{max_row}").expand("table").copy()
                 target_worksheet.range(f"C{cell_row}").expand(
                     "table").paste(paste="values")
 
-        if tanggal >= 11:
+                target_worksheet.api.Application.CutCopyMode = False
+
+        if real_date >= 17:
             for i in range(5, 10):
                 source_worksheet = source_workbook.sheets[i]
                 target_worksheet = target_workbook.sheets[i-5]
@@ -182,13 +212,18 @@ def gabung_customer(file_data, file_report, tgl, saved_as):
                     cell_row = int(re.findall(
                         r'\d+', (target_worksheet.range(f"DK{max_row}").end('up').address))[0])+1
 
-                if (cell_row < max_row) and target_worksheet.range(f"DK{cell_row}").value is None:
+                if is_blank == 1:
+                    cell_row += merged
+
+                if (cell_row <= max_row) and target_worksheet.range(f"DK{cell_row}").value is None:
                     if i == 9:
                         source_worksheet.range("C5").expand('table').copy()
                     else:
                         source_worksheet.range("C4").expand('table').copy()
                     target_worksheet.range(f"DK{cell_row}").expand(
                         "table").paste(paste="values")
+
+                    target_worksheet.api.Application.CutCopyMode = False
 
         target_workbook.save(saved_as)
         source_workbook.close()
