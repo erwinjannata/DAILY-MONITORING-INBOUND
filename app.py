@@ -58,10 +58,10 @@ def combine_process():
                      message="Pilihan jenis report tidak valid")
     elif not file_data:
         showinfo(title="Message",
-                 message="Tidak ada file data dipilih!")
+                 message="File rumus tidak ditemukan!")
     elif not file_report:
         showinfo(title="Message",
-                 message="Tidak ada file master dipilih!")
+                 message="File report tidak ditemukan!")
     elif not saved_as:
         showinfo(title="Message",
                  message="Pilih lokasi penyimpanan file yang valid")
@@ -113,7 +113,7 @@ calendar = DateEntry(root, selectmode='day', locale='en_US',
                      date_pattern='M/d/yyyy', weekendbackground='white', weekendforeground='black')
 calendar.pack(pady=10, padx=10, fill='both')
 
-label2 = ttk.Label(root, text="3. Pilih file Excel Rumus", background="white", font="calibri 11 bold").pack(
+label2 = ttk.Label(root, text="3. File excel rumus", background="white", font="calibri 11 bold").pack(
     fill="x", padx=10, pady=5)
 
 label_name1 = ttk.Label(root, textvariable=file_data_name, background="white").pack(
@@ -122,7 +122,7 @@ label_name1 = ttk.Label(root, textvariable=file_data_name, background="white").p
 btn1 = ttk.Button(root, text="Pilih File", command=load_data, state=tk.NORMAL)
 btn1.pack(fill="x", padx=10, pady=5)
 
-label3 = ttk.Label(root, text="4. Pilih file Excel Report", background="white", font="calibri 11 bold").pack(
+label3 = ttk.Label(root, text="4. File report terbaru", background="white", font="calibri 11 bold").pack(
     fill="x", padx=10, pady=5)
 
 label_name2 = ttk.Label(root, textvariable=file_report_name, background="white").pack(
@@ -139,7 +139,7 @@ check_label.pack(pady=5, padx=10, anchor="w")
 separator = ttk.Separator(root, orient='horizontal').pack(
     fill='x', pady=5, padx=10)
 
-combine_btn = ttk.Button(root, text="Gabungkan",
+combine_btn = ttk.Button(root, text="Proses",
                          command=lambda: start_combine_thread(None), state=tk.NORMAL)
 combine_btn.pack(fill="x", padx=10, pady=10)
 

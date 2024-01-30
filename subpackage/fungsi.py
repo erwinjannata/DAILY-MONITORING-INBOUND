@@ -38,7 +38,7 @@ def gabung_cabang(file_data, file_report, tgl, saved_as, is_blank):
                 first_row = target_worksheet.range(f"{cell_column1}4")
                 last_row = target_worksheet.range(f"{cell_column1}{max_row}")
 
-                # Lacak data yang akan di copy
+                # Lacak lokasi paste
                 if first_row.value is None and target_worksheet.range(f"{cell_column1}{4 + merged}").value is None:
                     cell_row = 4
                 else:
@@ -48,7 +48,7 @@ def gabung_cabang(file_data, file_report, tgl, saved_as, is_blank):
                 if is_blank == 1:
                     cell_row += merged
 
-                # Lacak lokasi paste
+                # Lacak data yang akan di copy
                 if source_worksheet.range(f"{cell_column1}4").value is None:
                     col1 = int(re.findall(r'\d+', source_worksheet.range(f"{cell_column1}4").end('down').get_address(
                         row_absolute=False, column_absolute=False, include_sheetname=False, external=False))[0])
