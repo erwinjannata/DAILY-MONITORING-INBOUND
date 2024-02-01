@@ -78,7 +78,8 @@ def gabung_cabang(file_data, file_report, tgl, saved_as, over_month, tgl_over):
         source_workbook.close()
         target_workbook.close()
         app.quit()
-        showinfo(title="Message", message="Proses selesai")
+        showinfo(title="Message",
+                 message=f"Proses selesai \n Hasil disimpan di: \n {saved_as}")
     except OSError:
         app.quit()
         showinfo(title="Message",
@@ -195,8 +196,8 @@ def gabung_customer(file_data, file_report, tgl, saved_as, over_month, tgl_over)
         target_workbook.save(saved_as)
         source_workbook.close()
         target_workbook.close()
-        app.quit()
-        showinfo(title="Message", message="Proses selesai")
+        showinfo(title="Message",
+                 message=f"Proses selesai \n Hasil disimpan di: \n {saved_as}")
     except OSError:
         app.quit()
         showinfo(title="Message",

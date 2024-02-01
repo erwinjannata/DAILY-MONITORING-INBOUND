@@ -9,7 +9,7 @@ from subpackage.fungsi import gabung_cabang, gabung_customer
 root = tk.Tk()
 root.iconbitmap(r'D:\JNE\PROGRAM\DAILY MONITORING INBOUND\imgs\jne.ico')
 root.configure(bg="white")
-root.geometry("350x535")
+root.geometry("375x535")
 root.title("Combine Data Monitoring")
 
 file_data = ""
@@ -46,7 +46,7 @@ def combine_process():
                                             ("Excel Workbook (.xlsx)", "*.xlsx")])
     date = calendar.get()
 
-    if (os.path.exists(file_data) and os.path.exists(file_report)) and saved_as:
+    if (os.path.exists(file_data) and os.path.exists(file_report)) and (saved_as and over_date.get() <= 31):
         progressbar.start()
         if mode == 0:
             gabung_cabang(file_data=file_data,
@@ -66,6 +66,9 @@ def combine_process():
     elif not saved_as:
         showinfo(title="Message",
                  message="Pilih lokasi penyimpanan file yang valid")
+    elif over_date.get() >= 32:
+        showinfo(title="Message",
+                 message="Tanggal H+0 bulan selanjutnya tidak valid!")
     else:
         showinfo(title="Message",
                  message="Cek kembali excel yang dipilih!")
@@ -75,6 +78,7 @@ def combine_process():
     btn2.state(['!disabled'])
     check_label.config(state="normal")
     over_tgl['state'] = 'disabled'
+    over_month.set(0)
     over_date.set(0)
     combine_btn.state(['!disabled'])
 
@@ -119,7 +123,7 @@ combo_box['value'] = ('Daily Monitoring per Cabang',
 combo_box.pack(pady=10, padx=10, fill='both')
 combo_box.current(0)
 
-label1 = ttk.Label(root, text="2. Tanggal Data", background="white", font="calibri 11 bold").pack(
+label1 = ttk.Label(root, text="2. Tanggal Data (H+0)", background="white", font="calibri 11 bold").pack(
     fill="x", padx=10, pady=5)
 
 calendar = DateEntry(root, selectmode='day', locale='en_US',
@@ -130,7 +134,7 @@ check_label = tk.Checkbutton(
     root, text="Tarikan bulan selanjutnya", background="white", variable=over_month, onvalue=1, offvalue=0, command=change_state)
 check_label.pack(pady=5, padx=10, anchor="w")
 
-label4 = ttk.Label(root, text="3. (Opsional) Tanggal tarikan bulan selanjutnya", background="white", font="calibri 11 bold").pack(
+label4 = ttk.Label(root, text="3. Tanggal tarikan bulan selanjutnya (H+0) **opsional", background="white", font="calibri 11 bold").pack(
     fill="x", padx=10, pady=5)
 
 over_tgl = tk.Entry(root, textvariable=over_date, state='disabled')
