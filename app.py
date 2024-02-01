@@ -126,7 +126,18 @@ calendar = DateEntry(root, selectmode='day', locale='en_US',
                      date_pattern='M/d/yyyy', weekendbackground='white', weekendforeground='black')
 calendar.pack(pady=10, padx=10, fill='both')
 
-label2 = ttk.Label(root, text="3. File excel rumus", background="white", font="calibri 11 bold").pack(
+check_label = tk.Checkbutton(
+    root, text="Tarikan bulan selanjutnya", background="white", variable=over_month, onvalue=1, offvalue=0, command=change_state)
+check_label.pack(pady=5, padx=10, anchor="w")
+
+label4 = ttk.Label(root, text="3. (Opsional) Tanggal tarikan bulan selanjutnya", background="white", font="calibri 11 bold").pack(
+    fill="x", padx=10, pady=5)
+
+over_tgl = tk.Entry(root, textvariable=over_date, state='disabled')
+over_tgl.pack(
+    fill="x", padx=10, pady=5)
+
+label2 = ttk.Label(root, text="4. File excel rumus", background="white", font="calibri 11 bold").pack(
     fill="x", padx=10, pady=5)
 
 label_name1 = ttk.Label(root, textvariable=file_data_name, background="white").pack(
@@ -135,7 +146,7 @@ label_name1 = ttk.Label(root, textvariable=file_data_name, background="white").p
 btn1 = ttk.Button(root, text="Pilih File", command=load_data, state=tk.NORMAL)
 btn1.pack(fill="x", padx=10, pady=5)
 
-label3 = ttk.Label(root, text="4. File report terbaru", background="white", font="calibri 11 bold").pack(
+label3 = ttk.Label(root, text="5. File report terbaru", background="white", font="calibri 11 bold").pack(
     fill="x", padx=10, pady=5)
 
 label_name2 = ttk.Label(root, textvariable=file_report_name, background="white").pack(
@@ -144,17 +155,6 @@ label_name2 = ttk.Label(root, textvariable=file_report_name, background="white")
 btn2 = ttk.Button(root, text="Pilih File",
                   command=load_master_report, state=tk.NORMAL)
 btn2.pack(fill="x", padx=10, pady=5)
-
-label4 = ttk.Label(root, text="5. (Opsional) Tanggal tarikan bulan selanjutnya", background="white", font="calibri 11 bold").pack(
-    fill="x", padx=10, pady=5)
-
-check_label = tk.Checkbutton(
-    root, text="Tarikan bulan selanjutnya", background="white", variable=over_month, onvalue=1, offvalue=0, command=change_state)
-check_label.pack(pady=5, padx=10, anchor="w")
-
-over_tgl = tk.Entry(root, textvariable=over_date, state='disabled')
-over_tgl.pack(
-    fill="x", padx=10, pady=5)
 
 separator = ttk.Separator(root, orient='horizontal').pack(
     fill='x', pady=5, padx=10)
