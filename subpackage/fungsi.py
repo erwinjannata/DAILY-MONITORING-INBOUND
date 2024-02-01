@@ -2,16 +2,18 @@ import xlwings as xl
 from tkinter.messagebox import showinfo
 import re
 import os
+import datetime as dt
 
-cabang_col1 = ['F', 'S', 'AF', 'AS', 'BF', 'BS', 'CF', 'CS',
+cabang_col1 = ['D', 'S', 'AF', 'AS', 'BF', 'BS', 'CF', 'CS',
                'DF', 'DS', 'EF', 'ES', 'FF', 'FS', 'GF', 'GS']
 
 cabang_col2 = ['R', 'AE', 'AR', 'BE', 'BR', 'CE', 'CR',
                'DE', 'DR', 'EE', 'ER', 'FE', 'FR', 'GE', 'GR', 'HE']
 
 
-def gabung_cabang(file_data, file_report, tgl, saved_as, is_blank):
+def gabung_cabang(file_data, file_report, tgl, saved_as, over_month, tgl_over):
     tanggal = int(tgl.split('/')[1])
+    real_date = tanggal
 
     if tanggal > 16:
         tanggal = 16
@@ -34,63 +36,43 @@ def gabung_cabang(file_data, file_report, tgl, saved_as, is_blank):
 
             merged = target_worksheet.range("A4").merge_area.count
 
+            if over_month == 1:
+                cell_row = (4 + (merged * (real_date - 1))) + \
+                    (merged * tgl_over)
+            else:
+                cell_row = 4 + (merged * (real_date - 1))
+
             for idx, cell_column1 in enumerate(cabang_col1[0:tanggal]):
-                first_row = target_worksheet.range(f"{cell_column1}4")
-                last_row = target_worksheet.range(f"{cell_column1}{max_row}")
-
-                # Lacak lokasi paste
-                if first_row.value is None and target_worksheet.range(f"{cell_column1}{4 + merged}").value is None:
-                    cell_row = 4
-                else:
-                    cell_row = int(re.findall(
-                        r'\d+', (last_row.end('up').address))[0]) + 1
-
-                if is_blank == 1:
-                    cell_row += merged
-
                 # Lacak data yang akan di copy
                 if source_worksheet.range(f"{cell_column1}4").value is None:
                     col1 = int(re.findall(r'\d+', source_worksheet.range(f"{cell_column1}4").end('down').get_address(
                         row_absolute=False, column_absolute=False, include_sheetname=False, external=False))[0])
                 else:
-                    col1 = 4
+                    if idx == 0:
+                        col1 = int(re.findall(
+                            r'\d+', (source_worksheet.range("C4").end("down").address))[0]) - (merged - 1)
+                    else:
+                        col1 = 4
 
-                col2 = int(re.findall(r'\d+', source_worksheet.range(f'{cell_column1}{col1}').end('down').get_address(
-                    row_absolute=False, column_absolute=False, include_sheetname=False, external=False))[0])
+                if idx == 0:
+                    col2 = int(re.findall(
+                        r'\d+', (source_worksheet.range("C4").end("down").address))[0])
+                else:
+                    col2 = int(re.findall(r'\d+', source_worksheet.range(f'{cell_column1}{col1}').end('down').get_address(
+                        row_absolute=False, column_absolute=False, include_sheetname=False, external=False))[0])
 
                 # proses copy
-                if (cell_row <= max_row) and target_worksheet.range(f"{cell_column1}{cell_row}").value is None:
-                    if (is_blank == 1 and idx == (tanggal-1)) and first_row.value is None:
-                        cell_row = 4
-
+                if cell_row < max_row:
                     source_worksheet.range(
                         f"{cell_column1}{col1}:{cabang_col2[idx]}{col2}").expand("down").copy()
                     target_worksheet.range(f"{cell_column1}{cell_row}").expand(
                         "table").paste(paste="values")
 
                     target_worksheet.api.Application.CutCopyMode = False
+                    cell_row -= merged
                 else:
+                    cell_row -= merged
                     continue
-
-            if target_worksheet.range("D4").value is None and target_worksheet.range(f"D{4 + merged}").value is None:
-                cell_row = 4
-            else:
-                cell_row = int(re.findall(
-                    r'\d+', (target_worksheet.range(f"D{max_row}").end('up').address))[0]) + 1
-
-            if is_blank == 1:
-                cell_row += merged
-
-            col1 = int(re.findall(r'\d+', source_worksheet.range("F4").end('down').get_address(
-                row_absolute=False, column_absolute=False, include_sheetname=False, external=False))[0])
-
-            if (cell_row <= max_row) and target_worksheet.range(f"D{cell_row}").value is None:
-                source_worksheet.range(
-                    f"D{col1}:E{max_row}").expand("down").copy()
-                target_worksheet.range(f"D{cell_row}").expand(
-                    "table").paste(paste="values")
-
-                target_worksheet.api.Application.CutCopyMode = False
 
         target_workbook.save(saved_as)
         source_workbook.close()
@@ -110,12 +92,12 @@ def gabung_cabang(file_data, file_report, tgl, saved_as, is_blank):
         print(e)
 
 
-customer_col1 = ['E', 'P', 'AA', 'AL', 'AW', 'BH', 'BS', 'CD', 'CO', 'CZ']
+customer_col1 = ['C', 'P', 'AA', 'AL', 'AW', 'BH', 'BS', 'CD', 'CO', 'CZ']
 
 customer_col2 = ['O', 'Z', 'AK', 'AV', 'BG', 'BR', 'CC', 'CN', 'CY', 'DJ']
 
 
-def gabung_customer(file_data, file_report, tgl, saved_as, is_blank):
+def gabung_customer(file_data, file_report, tgl, saved_as, over_month, tgl_over):
     tanggal = int(tgl.split('/')[1])
     real_date = tanggal
 
@@ -144,78 +126,63 @@ def gabung_customer(file_data, file_report, tgl, saved_as, is_blank):
 
             merged = target_worksheet.range("A5").merge_area.count
 
+            if over_month == 1:
+                cell_row = (5 + (merged * (real_date - 1))) + \
+                    (merged * tgl_over)
+            else:
+                cell_row = 5 + (merged * (real_date - 1))
+
             for idx, cell_column1 in enumerate(customer_col1[0:tanggal]):
-                first_row = target_worksheet.range(f"{cell_column1}5")
-                last_row = target_worksheet.range(f"{cell_column1}{max_row}")
-
-                if first_row.value is None and target_worksheet.range(f"{cell_column1}{5 + merged}").value is None:
-                    cell_row = 5
-                else:
-                    cell_row = int(re.findall(
-                        r'\d+', (last_row.end('up').address))[0])+1
-
-                if is_blank == 1:
-                    cell_row += merged
-
+                # Lacak data yang akan di copy
                 if source_worksheet.range(f"{cell_column1}5").value is None:
                     col1 = int(re.findall(r'\d+', source_worksheet.range(f"{cell_column1}5").end('down').get_address(
                         row_absolute=False, column_absolute=False, include_sheetname=False, external=False))[0])
                 else:
-                    col1 = 5
+                    if idx == 0:
+                        col1 = int(re.findall(
+                            r'\d+', (source_worksheet.range("C5").end("down").address))[0]) - (merged - 1)
+                    else:
+                        col1 = 5
 
-                col2 = int(re.findall(r'\d+', source_worksheet.range(f'{cell_column1}{col1}').end('down').get_address(
-                    row_absolute=False, column_absolute=False, include_sheetname=False, external=False))[0])
+                if idx == 0:
+                    col2 = int(re.findall(
+                        r'\d+', (source_worksheet.range("C5").end("down").address))[0])
+                else:
+                    col2 = int(re.findall(r'\d+', source_worksheet.range(f'{cell_column1}{col1}').end('down').get_address(
+                        row_absolute=False, column_absolute=False, include_sheetname=False, external=False))[0])
 
                 # proses copy
-                if (cell_row <= max_row) and target_worksheet.range(f"{cell_column1}{cell_row}").value is None:
-                    if (is_blank == 1 and idx == (tanggal-1)) and first_row.value is None:
-                        if idx <= 7:
-                            cell_row = 5
-
+                if cell_row <= max_row:
                     source_worksheet.range(
                         f"{cell_column1}{col1}:{customer_col2[idx]}{col2}").expand("down").copy()
                     target_worksheet.range(f"{cell_column1}{cell_row}").expand(
                         "table").paste(paste="values")
 
                     target_worksheet.api.Application.CutCopyMode = False
+                    if idx < 7:
+                        cell_row -= merged
+                    elif idx == 7:
+                        cell_row -= (merged * 3)
+                    elif idx == 8:
+                        cell_row -= (merged * 5)
                 else:
+                    if idx < 7:
+                        cell_row -= merged
+                    elif idx == 7:
+                        cell_row -= (merged * 3)
+                    elif idx == 8:
+                        cell_row -= (merged * 5)
                     continue
-
-            if target_worksheet.range("C5").value is None and target_worksheet.range(f"C{5 + merged}").value is None:
-                cell_row = 5
-            else:
-                cell_row = int(re.findall(
-                    r'\d+', (target_worksheet.range(f"C{max_row}").end('up').address))[0])+1
-
-            if is_blank == 1:
-                cell_row += merged
-
-            col1 = int(re.findall(r'\d+', source_worksheet.range("E5").end('down').get_address(
-                row_absolute=False, column_absolute=False, include_sheetname=False, external=False))[0])
-
-            if (cell_row <= max_row) and target_worksheet.range(f"C{cell_row}").value is None:
-                source_worksheet.range(
-                    f"C{col1}:D{max_row}").expand("table").copy()
-                target_worksheet.range(f"C{cell_row}").expand(
-                    "table").paste(paste="values")
-
-                target_worksheet.api.Application.CutCopyMode = False
 
         if real_date >= 17:
             for i in range(5, 10):
                 source_worksheet = source_workbook.sheets[i]
                 target_worksheet = target_workbook.sheets[i-5]
 
-                if target_worksheet.range("DK5").value is None and target_worksheet.range(f"DK{5 + merged}").value is None:
-                    cell_row = 5
-                else:
-                    cell_row = int(re.findall(
-                        r'\d+', (target_worksheet.range(f"DK{max_row}").end('up').address))[0])+1
+                cell_row = int(re.findall(
+                    r'\d+', (target_worksheet.range(f"{customer_col1[9]}{max_row}").end("up").address))[0]) - ((2 * merged) - 1)
 
-                if is_blank == 1:
-                    cell_row += merged
-
-                if (cell_row <= max_row) and target_worksheet.range(f"DK{cell_row}").value is None:
+                if cell_row <= max_row:
                     if i == 9:
                         source_worksheet.range("C5").expand('table').copy()
                     else:

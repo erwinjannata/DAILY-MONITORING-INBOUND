@@ -9,7 +9,7 @@ from subpackage.fungsi import gabung_cabang, gabung_customer
 root = tk.Tk()
 root.iconbitmap(r'D:\JNE\PROGRAM\DAILY MONITORING INBOUND\imgs\jne.ico')
 root.configure(bg="white")
-root.geometry("350x475")
+root.geometry("350x500")
 root.title("Combine Data Monitoring")
 
 file_data = ""
@@ -18,7 +18,8 @@ file_report = ""
 file_data_name = tk.StringVar()
 file_report_name = tk.StringVar()
 mode = tk.StringVar()
-is_blank = tk.IntVar()
+over_month = tk.IntVar()
+over_date = tk.IntVar()
 
 
 def load_data():
@@ -49,10 +50,10 @@ def combine_process():
         progressbar.start()
         if mode == 0:
             gabung_cabang(file_data=file_data,
-                          file_report=file_report, tgl=date, saved_as=saved_as, is_blank=is_blank.get())
+                          file_report=file_report, tgl=date, saved_as=saved_as, over_month=over_month.get(), tgl_over=over_date.get())
         elif mode == 1:
             gabung_customer(file_data=file_data,
-                            file_report=file_report, tgl=date, saved_as=saved_as, is_blank=is_blank.get())
+                            file_report=file_report, tgl=date, saved_as=saved_as, over_month=over_month.get(), tgl_over=over_date.get())
         else:
             showinfo(title="Message",
                      message="Pilihan jenis report tidak valid")
@@ -73,6 +74,8 @@ def combine_process():
     btn1.state(['!disabled'])
     btn2.state(['!disabled'])
     check_label.config(state="normal")
+    over_tgl['state'] = 'disabled'
+    over_date.set(0)
     combine_btn.state(['!disabled'])
 
 
@@ -85,6 +88,7 @@ def start_combine_thread(event):
     btn1.state(['disabled'])
     btn2.state(['disabled'])
     check_label.config(state="disabled")
+    over_tgl['state'] = 'disabled'
     combine_btn.state(['disabled'])
     combine_thread.start()
     root.after(20, check_combine_thread)
@@ -97,6 +101,15 @@ def check_combine_thread():
         progressbar.stop()
 
 
+def change_state():
+    if over_tgl['state'] == 'disabled':
+        over_tgl['state'] = 'normal'
+        over_date.set(1)
+    else:
+        over_tgl['state'] = 'disabled'
+        over_date.set(0)
+
+
 # GUI
 combo_label = ttk.Label(root, text="1. Jenis Report",
                         background="white", font="calibri 11 bold").pack(fill="x", padx=10, pady=5)
@@ -106,7 +119,7 @@ combo_box['value'] = ('Daily Monitoring per Cabang',
 combo_box.pack(pady=10, padx=10, fill='both')
 combo_box.current(0)
 
-label1 = ttk.Label(root, text="2. Tanggal Tarikan Data", background="white", font="calibri 11 bold").pack(
+label1 = ttk.Label(root, text="2. Tanggal Data", background="white", font="calibri 11 bold").pack(
     fill="x", padx=10, pady=5)
 
 calendar = DateEntry(root, selectmode='day', locale='en_US',
@@ -132,9 +145,16 @@ btn2 = ttk.Button(root, text="Pilih File",
                   command=load_master_report, state=tk.NORMAL)
 btn2.pack(fill="x", padx=10, pady=5)
 
+label4 = ttk.Label(root, text="5. (Opsional) Tanggal tarikan bulan selanjutnya", background="white", font="calibri 11 bold").pack(
+    fill="x", padx=10, pady=5)
+
 check_label = tk.Checkbutton(
-    root, text="Tarikan sebelumnya kosong", background="white", variable=is_blank, onvalue=1, offvalue=0)
+    root, text="Tarikan bulan selanjutnya", background="white", variable=over_month, onvalue=1, offvalue=0, command=change_state)
 check_label.pack(pady=5, padx=10, anchor="w")
+
+over_tgl = tk.Entry(root, textvariable=over_date, state='disabled')
+over_tgl.pack(
+    fill="x", padx=10, pady=5)
 
 separator = ttk.Separator(root, orient='horizontal').pack(
     fill='x', pady=5, padx=10)
