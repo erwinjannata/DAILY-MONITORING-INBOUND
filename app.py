@@ -66,7 +66,10 @@ def combine_process():
     elif not saved_as:
         showinfo(title="Message",
                  message="Pilih lokasi penyimpanan file yang valid")
-    elif over_date.get() >= 16:
+    elif mode == 0 and over_date.get() >= 16:
+        showinfo(title="Message",
+                 message="Tanggal bulan selanjutnya tidak valid!")
+    elif over_date.get() >= 17:
         showinfo(title="Message",
                  message="Tanggal bulan selanjutnya tidak valid!")
     else:

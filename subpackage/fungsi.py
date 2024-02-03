@@ -180,8 +180,14 @@ def gabung_customer(file_data, file_report, tgl, saved_as, over_month, tgl_over)
                 source_worksheet = source_workbook.sheets[i]
                 target_worksheet = target_workbook.sheets[i-5]
 
-                cell_row = int(re.findall(
-                    r'\d+', (target_worksheet.range(f"{customer_col1[9]}{max_row}").end("up").address))[0]) - ((2 * merged) - 1)
+                if target_worksheet.range(f"{customer_col1[9]}{max_row}").value is None:
+                    cell_row = int(re.findall(r'\d+', (target_worksheet.range(
+                        f"{customer_col1[9]}{max_row}").end("up").address))[0]) - ((2 * merged) - 1)
+                else:
+                    cell_row = max_row - ((2 * merged) - 1)
+
+                if tgl_over == 16:
+                    cell_row = max_row - (merged - 1)
 
                 if cell_row <= max_row:
                     if i == 9:
