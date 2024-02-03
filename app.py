@@ -66,9 +66,9 @@ def combine_process():
     elif not saved_as:
         showinfo(title="Message",
                  message="Pilih lokasi penyimpanan file yang valid")
-    elif over_date.get() >= 32:
+    elif over_date.get() >= 16:
         showinfo(title="Message",
-                 message="Tanggal H+0 bulan selanjutnya tidak valid!")
+                 message="Tanggal bulan selanjutnya tidak valid!")
     else:
         showinfo(title="Message",
                  message="Cek kembali excel yang dipilih!")
@@ -123,7 +123,7 @@ combo_box['value'] = ('Daily Monitoring per Cabang',
 combo_box.pack(pady=10, padx=10, fill='both')
 combo_box.current(0)
 
-label1 = ttk.Label(root, text="2. Tanggal Data (H+0)", background="white", font="calibri 11 bold").pack(
+label1 = ttk.Label(root, text="2. Tanggal Data", background="white", font="calibri 11 bold").pack(
     fill="x", padx=10, pady=5)
 
 calendar = DateEntry(root, selectmode='day', locale='en_US',
@@ -134,7 +134,7 @@ check_label = tk.Checkbutton(
     root, text="Tarikan bulan selanjutnya", background="white", variable=over_month, onvalue=1, offvalue=0, command=change_state)
 check_label.pack(pady=5, padx=10, anchor="w")
 
-label4 = ttk.Label(root, text="3. Tanggal tarikan bulan selanjutnya (H+0) **opsional", background="white", font="calibri 11 bold").pack(
+label4 = ttk.Label(root, text="3. Tanggal tarikan bulan selanjutnya **opsional", background="white", font="calibri 11 bold").pack(
     fill="x", padx=10, pady=5)
 
 over_tgl = tk.Entry(root, textvariable=over_date, state='disabled')
