@@ -11,7 +11,7 @@ cabang_col2 = ['R', 'AE', 'AR', 'BE', 'BR', 'CE', 'CR',
                'DE', 'DR', 'EE', 'ER', 'FE', 'FR', 'GE', 'GR', 'HE']
 
 
-def gabung_cabang(file_data, file_report, tgl, saved_as, over_month, tgl_over):
+def gabung_cabang(file_data, file_report, tgl, saved_as, over_month):
     tanggal = int(tgl.split('/')[1])
     real_date = tanggal
 
@@ -37,8 +37,8 @@ def gabung_cabang(file_data, file_report, tgl, saved_as, over_month, tgl_over):
             merged = target_worksheet.range("A4").merge_area.count
 
             if over_month == 1:
-                cell_row = (4 + (merged * (real_date - 1))) + \
-                    (merged * tgl_over)
+                tanggal = 16
+                cell_row = max_row + (((real_date - 1) * merged) + 1)
             else:
                 cell_row = 4 + (merged * (real_date - 1))
 
@@ -98,7 +98,7 @@ customer_col1 = ['C', 'P', 'AA', 'AL', 'AW', 'BH', 'BS', 'CD', 'CO', 'CZ']
 customer_col2 = ['O', 'Z', 'AK', 'AV', 'BG', 'BR', 'CC', 'CN', 'CY', 'DJ']
 
 
-def gabung_customer(file_data, file_report, tgl, saved_as, over_month, tgl_over):
+def gabung_customer(file_data, file_report, tgl, saved_as, over_month):
     tanggal = int(tgl.split('/')[1])
     real_date = tanggal
 
@@ -128,8 +128,8 @@ def gabung_customer(file_data, file_report, tgl, saved_as, over_month, tgl_over)
             merged = target_worksheet.range("A5").merge_area.count
 
             if over_month == 1:
-                cell_row = (5 + (merged * (real_date - 1))) + \
-                    (merged * tgl_over)
+                tanggal = 10
+                cell_row = max_row + (((real_date - 1) * merged) + 1)
             else:
                 cell_row = 5 + (merged * (real_date - 1))
 
@@ -175,19 +175,15 @@ def gabung_customer(file_data, file_report, tgl, saved_as, over_month, tgl_over)
                         cell_row -= (merged * 5)
                     continue
 
-        if real_date >= 17:
+        if real_date >= 17 or over_month == 1:
             for i in range(5, 10):
                 source_worksheet = source_workbook.sheets[i]
                 target_worksheet = target_workbook.sheets[i-5]
 
-                if target_worksheet.range(f"{customer_col1[9]}{max_row}").value is None:
-                    cell_row = int(re.findall(r'\d+', (target_worksheet.range(
-                        f"{customer_col1[9]}{max_row}").end("up").address))[0]) - ((2 * merged) - 1)
-                else:
-                    cell_row = max_row - ((2 * merged) - 1)
+                cell_row = (real_date - 16) * merged
 
-                if tgl_over == 16:
-                    cell_row = max_row - (merged - 1)
+                if over_month == 1:
+                    cell_row = ((31 + real_date) - 16) * merged
 
                 if cell_row <= max_row:
                     if i == 9:

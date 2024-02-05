@@ -9,7 +9,7 @@ from subpackage.fungsi import gabung_cabang, gabung_customer
 root = tk.Tk()
 root.iconbitmap(r'D:\JNE\PROGRAM\DAILY MONITORING INBOUND\imgs\jne.ico')
 root.configure(bg="white")
-root.geometry("375x535")
+root.geometry("350x475")
 root.title("Combine Data Monitoring")
 
 file_data = ""
@@ -19,7 +19,6 @@ file_data_name = tk.StringVar()
 file_report_name = tk.StringVar()
 mode = tk.StringVar()
 over_month = tk.IntVar()
-over_date = tk.IntVar()
 
 
 def load_data():
@@ -44,16 +43,17 @@ def combine_process():
     mode = combo_box.current()
     saved_as = filedialog.asksaveasfilename(defaultextension=".xlsx", filetypes=[
                                             ("Excel Workbook (.xlsx)", "*.xlsx")])
+    global date
     date = calendar.get()
 
-    if (os.path.exists(file_data) and os.path.exists(file_report)) and (saved_as and over_date.get() <= 31):
+    if (os.path.exists(file_data) and os.path.exists(file_report)) and saved_as:
         progressbar.start()
         if mode == 0:
             gabung_cabang(file_data=file_data,
-                          file_report=file_report, tgl=date, saved_as=saved_as, over_month=over_month.get(), tgl_over=over_date.get())
+                          file_report=file_report, tgl=date, saved_as=saved_as, over_month=over_month.get())
         elif mode == 1:
             gabung_customer(file_data=file_data,
-                            file_report=file_report, tgl=date, saved_as=saved_as, over_month=over_month.get(), tgl_over=over_date.get())
+                            file_report=file_report, tgl=date, saved_as=saved_as, over_month=over_month.get())
         else:
             showinfo(title="Message",
                      message="Pilihan jenis report tidak valid")
@@ -66,10 +66,10 @@ def combine_process():
     elif not saved_as:
         showinfo(title="Message",
                  message="Pilih lokasi penyimpanan file yang valid")
-    elif mode == 0 and over_date.get() >= 16:
+    elif mode == 0 and date >= 16:
         showinfo(title="Message",
                  message="Tanggal bulan selanjutnya tidak valid!")
-    elif over_date.get() >= 17:
+    elif date >= 17:
         showinfo(title="Message",
                  message="Tanggal bulan selanjutnya tidak valid!")
     else:
@@ -80,9 +80,7 @@ def combine_process():
     btn1.state(['!disabled'])
     btn2.state(['!disabled'])
     check_label.config(state="normal")
-    over_tgl['state'] = 'disabled'
     over_month.set(0)
-    over_date.set(0)
     combine_btn.state(['!disabled'])
 
 
@@ -95,7 +93,6 @@ def start_combine_thread(event):
     btn1.state(['disabled'])
     btn2.state(['disabled'])
     check_label.config(state="disabled")
-    over_tgl['state'] = 'disabled'
     combine_btn.state(['disabled'])
     combine_thread.start()
     root.after(20, check_combine_thread)
@@ -106,15 +103,6 @@ def check_combine_thread():
         root.after(20, check_combine_thread)
     else:
         progressbar.stop()
-
-
-def change_state():
-    if over_tgl['state'] == 'disabled':
-        over_tgl['state'] = 'normal'
-        over_date.set(1)
-    else:
-        over_tgl['state'] = 'disabled'
-        over_date.set(0)
 
 
 # GUI
@@ -134,17 +122,10 @@ calendar = DateEntry(root, selectmode='day', locale='en_US',
 calendar.pack(pady=10, padx=10, fill='both')
 
 check_label = tk.Checkbutton(
-    root, text="Tarikan bulan selanjutnya", background="white", variable=over_month, onvalue=1, offvalue=0, command=change_state)
+    root, text="Data bulan sebelumnya", background="white", variable=over_month, onvalue=1, offvalue=0)
 check_label.pack(pady=5, padx=10, anchor="w")
 
-label4 = ttk.Label(root, text="3. Tanggal tarikan bulan selanjutnya **opsional", background="white", font="calibri 11 bold").pack(
-    fill="x", padx=10, pady=5)
-
-over_tgl = tk.Entry(root, textvariable=over_date, state='disabled')
-over_tgl.pack(
-    fill="x", padx=10, pady=5)
-
-label2 = ttk.Label(root, text="4. File excel rumus", background="white", font="calibri 11 bold").pack(
+label2 = ttk.Label(root, text="3. File excel rumus", background="white", font="calibri 11 bold").pack(
     fill="x", padx=10, pady=5)
 
 label_name1 = ttk.Label(root, textvariable=file_data_name, background="white").pack(
@@ -153,7 +134,7 @@ label_name1 = ttk.Label(root, textvariable=file_data_name, background="white").p
 btn1 = ttk.Button(root, text="Pilih File", command=load_data, state=tk.NORMAL)
 btn1.pack(fill="x", padx=10, pady=5)
 
-label3 = ttk.Label(root, text="5. File report terbaru", background="white", font="calibri 11 bold").pack(
+label3 = ttk.Label(root, text="4. File report terbaru", background="white", font="calibri 11 bold").pack(
     fill="x", padx=10, pady=5)
 
 label_name2 = ttk.Label(root, textvariable=file_report_name, background="white").pack(
