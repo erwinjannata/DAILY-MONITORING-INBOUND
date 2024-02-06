@@ -7,7 +7,6 @@ import os
 from subpackage.fungsi import gabung_cabang, gabung_customer
 
 root = tk.Tk()
-root.iconbitmap(r'D:\JNE\PROGRAM\DAILY MONITORING INBOUND\imgs\jne.ico')
 root.configure(bg="white")
 root.geometry("350x475")
 root.title("Combine Data Monitoring")

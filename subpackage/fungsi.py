@@ -2,7 +2,6 @@ import xlwings as xl
 from tkinter.messagebox import showinfo
 import re
 import os
-import datetime as dt
 
 cabang_col1 = ['D', 'S', 'AF', 'AS', 'BF', 'BS', 'CF', 'CS',
                'DF', 'DS', 'EF', 'ES', 'FF', 'FS', 'GF', 'GS']
