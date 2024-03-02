@@ -2,6 +2,8 @@ import xlwings as xl
 from tkinter.messagebox import showinfo
 import re
 import os
+import calendar
+import datetime
 
 cabang_col1 = ['D', 'S', 'AF', 'AS', 'BF', 'BS', 'CF', 'CS',
                'DF', 'DS', 'EF', 'ES', 'FF', 'FS', 'GF', 'GS']
@@ -100,6 +102,12 @@ customer_col2 = ['O', 'Z', 'AK', 'AV', 'BG', 'BR', 'CC', 'CN', 'CY', 'DJ']
 def gabung_customer(file_data, file_report, tgl, saved_as, over_month):
     tanggal = int(tgl.split('/')[1])
     real_date = tanggal
+    today = datetime.date.today()
+    first = today.replace(day=1)
+    last_month = first - datetime.timedelta(days=1)
+    year = today.year
+    month = last_month.strftime("%m")
+    days = calendar.monthrange(year, int(month))[1]
 
     if tanggal > 15:
         tanggal = 10
@@ -182,7 +190,7 @@ def gabung_customer(file_data, file_report, tgl, saved_as, over_month):
                 cell_row = (real_date - 16) * merged
 
                 if over_month == 1:
-                    cell_row = ((31 + real_date) - 16) * merged
+                    cell_row = ((days + real_date) - 16) * merged
 
                 if cell_row <= max_row:
                     if i == 9:
