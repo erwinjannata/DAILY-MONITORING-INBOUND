@@ -5,11 +5,12 @@ from tkcalendar import DateEntry
 import threading
 import os
 from subpackage.fungsi import gabung_cabang, gabung_customer
+from subpackage.grouping import grouping_daily_monitor
 
 root = tk.Tk()
 root.configure(bg="white")
 root.geometry("350x475")
-root.title("Combine Data Monitoring")
+root.title("Daily Monitoring Inbound")
 
 file_data = ""
 file_report = ""
@@ -45,7 +46,7 @@ def combine_process():
     global date
     date = calendar.get()
 
-    if (os.path.exists(file_data) and os.path.exists(file_report)) and saved_as:
+    if (mode != 2 and saved_as) and (os.path.exists(file_data) and os.path.exists(file_report)):
         progressbar.start()
         if mode == 0:
             gabung_cabang(file_data=file_data,
@@ -56,6 +57,10 @@ def combine_process():
         else:
             showinfo(title="Message",
                      message="Pilihan jenis report tidak valid")
+    elif mode == 2 and (saved_as and os.path.exists(file_data)):
+        progressbar.start()
+        grouping_daily_monitor(file_data=file_data,
+                               tanggal=date, saved_as=saved_as)
     elif not file_data:
         showinfo(title="Message",
                  message="File rumus tidak ditemukan!")
@@ -108,8 +113,10 @@ def check_combine_thread():
 combo_label = ttk.Label(root, text="1. Jenis Report",
                         background="white", font="calibri 11 bold").pack(fill="x", padx=10, pady=5)
 combo_box = ttk.Combobox(root, textvariable=mode)
-combo_box['value'] = ('Daily Monitoring per Cabang',
-                      'Daily Monitoring per Customer')
+combo_box['value'] = (
+    'Daily Monitoring per Cabang',
+    'Daily Monitoring per Customer',
+    'Grouping Data')
 combo_box.pack(pady=10, padx=10, fill='both')
 combo_box.current(0)
 
@@ -124,7 +131,7 @@ check_label = tk.Checkbutton(
     root, text="Data bulan sebelumnya", background="white", variable=over_month, onvalue=1, offvalue=0)
 check_label.pack(pady=5, padx=10, anchor="w")
 
-label2 = ttk.Label(root, text="3. File excel rumus", background="white", font="calibri 11 bold").pack(
+label2 = ttk.Label(root, text="3. File excel data/rumus", background="white", font="calibri 11 bold").pack(
     fill="x", padx=10, pady=5)
 
 label_name1 = ttk.Label(root, textvariable=file_data_name, background="white").pack(
