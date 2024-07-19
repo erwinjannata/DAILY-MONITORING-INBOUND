@@ -1,6 +1,5 @@
 import gc
 import pandas as pd
-from pathlib import Path
 from datetime import datetime
 from tkinter.messagebox import showinfo
 from reference.zona import zona
@@ -10,12 +9,7 @@ from reference.destination import destination
 
 def grouping_daily_monitor(file_data, tanggal, saved_as):
     # Load data source and reference table files
-    # working_dir = Path.cwd()
     df = pd.read_excel(file_data)
-    # zona_ref = pd.read_excel(
-    #     rf'{working_dir}\REFERENCE TABLE.xlsx', sheet_name='CODE DEST')
-    # customer_ref = pd.read_excel(
-    #     rf'{working_dir}\REFERENCE TABLE.xlsx', sheet_name='CUSTOMER')
 
     # Delete unused column
     df.drop(['Parameter Regional', 'Parameter Branch', 'Parameter Origin', 'Parameter Regional Dest.', 'Parameter Branch Dest.', 'Parameter Ring',
@@ -26,20 +20,6 @@ def grouping_daily_monitor(file_data, tanggal, saved_as):
             axis=1, inplace=True)
 
     try:
-        # # Load the reference table
-        # zona = {}
-        # customer = {}
-        # destination = {}
-
-        # for i in range(0, zona_ref.shape[0]):
-        #     zona[str(zona_ref['code dest'][i])] = zona_ref["ZONA"][i]
-        #     destination[str(zona_ref['code dest'][i])
-        #                 ] = zona_ref["NAMA KAB/KOTA"][i]
-
-        # for i in range(0, customer_ref.shape[0]):
-        #     customer[str(customer_ref['No. Account2']
-        #                  [i])] = customer_ref['Cust Grouping'][i]
-
         # Process every row of data
         group = []
         sla = []
@@ -118,4 +98,4 @@ def grouping_daily_monitor(file_data, tanggal, saved_as):
         showinfo(title="Message",
                  message="Proses selesai")
     except Exception as e:
-        showinfo(title="Error", message=f'Error : {e}')
+        showinfo(title="Error", message=f'{e}')
