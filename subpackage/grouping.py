@@ -63,7 +63,7 @@ def grouping_daily_monitor(file_data, tanggal, saved_as):
             try:
                 customer_name.append(customer[df['Hawb Customer'][index]])
             except:
-                customer_name.append('N/A')
+                customer_name.append('#N/A')
 
             # HAWB Destination Name
             destination_name.append(
