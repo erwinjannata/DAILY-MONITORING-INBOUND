@@ -2,14 +2,19 @@ import gc
 import pandas as pd
 from datetime import datetime
 from tkinter.messagebox import showinfo
-from reference.zona import zona
-from reference.customer import customer
-from reference.destination import destination
+from pathlib import Path
 
 
 def grouping_daily_monitor(file_data, tanggal, saved_as):
     # Load data source and reference table files
     df = pd.read_excel(file_data)
+    working_dir = Path.cwd()
+    df_zona = pd.read_excel(
+        rf'{working_dir}\INBOUND REFS.xlsx', sheet_name='ZONA')
+    df_destination = pd.read_excel(
+        rf'{working_dir}\INBOUND REFS.xlsx', sheet_name='DESTINATION')
+    df_customer = pd.read_excel(
+        rf'{working_dir}\INBOUND REFS.xlsx', sheet_name='CUSTOMER')
 
     # Delete unused column
     df.drop(['Parameter Regional', 'Parameter Branch', 'Parameter Origin', 'Parameter Regional Dest.', 'Parameter Branch Dest.', 'Parameter Ring',
@@ -27,6 +32,24 @@ def grouping_daily_monitor(file_data, tanggal, saved_as):
         customer_name = []
         destination_name = []
         inbound_date = []
+
+        zona = {}
+        customer = {}
+        destination = {}
+
+        # Load Reference Table for ZONA
+        for i in range(0, df_zona.shape[0]):
+            zona[str(df_zona['CODE'][i])] = df_zona['ZONA'][i]
+
+        # Load Reference Table for DESTINATION
+        for i in range(0, df_destination.shape[0]):
+            destination[str(df_destination['CODE'][i])
+                        ] = df_destination['NAMA KAB/KOTA'][i]
+
+        # Load Reference Table for CUSTOMER
+        for i in range(0, df_customer.shape[0]):
+            customer[str(df_customer['No. Account2'][i])
+                     ] = df_customer['Cust Grouping'][i]
 
         for index in range(0, df.shape[0]):
             # Status Group

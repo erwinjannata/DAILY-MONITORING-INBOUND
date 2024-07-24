@@ -5,7 +5,7 @@ a = Analysis(
     ['app.py'],
     pathex=[],
     binaries=[],
-    datas=[('./images/jne.ico', '.')],
+    datas=[],
     hiddenimports=['babel.numbers'],
     hookspath=[],
     hooksconfig={},
