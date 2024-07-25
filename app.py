@@ -116,7 +116,7 @@ combo_box = ttk.Combobox(root, textvariable=mode)
 combo_box['value'] = (
     'Daily Monitoring per Cabang',
     'Daily Monitoring per Customer',
-    'Grouping Data Daily Monitor (117)')
+    'Grouping Data')
 combo_box.pack(pady=10, padx=10, fill='both')
 combo_box.current(0)
 
