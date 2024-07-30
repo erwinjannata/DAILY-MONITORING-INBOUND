@@ -1,11 +1,11 @@
 import gc
 import pandas as pd
+from pathlib import Path
 from datetime import datetime
 from tkinter.messagebox import showinfo
-from pathlib import Path
 
 
-def grouping_daily_monitor(file_data, tanggal, saved_as):
+def grouping_daily_monitor(file_data, tanggal, saved_as, save_grouping):
     # Load data source and reference table files
     df = pd.read_excel(file_data)
     working_dir = Path.cwd()
@@ -18,10 +18,12 @@ def grouping_daily_monitor(file_data, tanggal, saved_as):
 
     # Delete unused column
     df.drop(['Parameter Regional', 'Parameter Branch', 'Parameter Origin', 'Parameter Regional Dest.', 'Parameter Branch Dest.', 'Parameter Ring',
-            'Parameter Destination', 'Parameter Date/Time', 'Parameter Date/Time From', 'Parameter Date/Time Thru', 'Jlc No', 'Goods Descr', 'Receiver Name',
+             'Parameter Destination', 'Parameter Date/Time', 'Parameter Date/Time From', 'Parameter Date/Time Thru', 'Jlc No', 'Goods Descr', 'Receiver Name',
              'Receiver Phone', 'Receiving Date', 'Hawb Branch Origin', 'Hawb Origin', 'Hawb Branch Destination', 'Hawb Amount', 'Hawb Packing', 'Hawb Cancel',
              'Hawb Type', 'Hawb Cust Type', 'Hawb Payment Type', 'Hawb Cust NA', 'Hawb Regional Dest.', 'Hawb Ring Dest.', 'Manifest UID', 'Zone', 'HVO No',
-             'HVO Date', 'HVO Zone Dest', 'DO No', 'DO Date', 'RDO No', 'RDO Date', 'Pra Runsheet No', 'Pra Runsheet Date', 'Pra Runsheet Courier', 'DO'],
+             'HVO Date', 'HVO Zone Dest', 'DO No', 'DO Date', 'RDO No', 'RDO Date', 'Pra Runsheet No', 'Pra Runsheet Date', 'Pra Runsheet Courier', 'DO',
+            #  'First Runsheet Date', 'First Status', 'Second Runsheet Date', 'Second Status', 'Last Runsheet Date', 'Last Status'
+             ],
             axis=1, inplace=True)
 
     try:
@@ -110,15 +112,18 @@ def grouping_daily_monitor(file_data, tanggal, saved_as):
         df.insert(24, "Status group", group)
         df.loc[:, 'SLA'] = sla
 
-        # Save the output
-        file_name = saved_as
-        with pd.ExcelWriter(file_name, engine='xlsxwriter', date_format='m/d/yyyy') as writer:
-            df.to_excel(writer, sheet_name='Sheet1', index=False)
+        # Save the output or pass to other component
+        if save_grouping == True:
+            file_name = saved_as
+            with pd.ExcelWriter(file_name, engine='xlsxwriter', date_format='m/d/yyyy') as writer:
+                df.to_excel(writer, sheet_name='Sheet1', index=False)
 
-        # Clean memory usage
-        del df
-        gc.collect()
-        showinfo(title="Message",
-                 message="Proses selesai")
+            # Clean memory usage
+            del df
+            gc.collect()
+            showinfo(title="Message",
+                     message="Proses selesai")
+        else:
+            return df
     except Exception as e:
         showinfo(title="Error", message=f'{e}')
