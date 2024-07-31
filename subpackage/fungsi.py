@@ -1,7 +1,5 @@
 import re
 import os
-import calendar
-import datetime
 import pandas as pd
 import xlwings as xl
 from tkinter.messagebox import showinfo
@@ -10,20 +8,17 @@ from subpackage.counting import counting_cabang, counting_customer
 
 
 def gabung_cabang(file_data, file_report, tgl, saved_as, over_month, is_grouped):
-    if is_grouped == 0:
-        datas = grouping_daily_monitor(
-            file_data=file_data, save_grouping=False, saved_as='', tanggal=tgl)
-    else:
-        datas = pd.read_excel(file_data)
-
     app = xl.App(visible=False)
     target_workbook = xl.Book(file_report)
 
-    tanggal = int(tgl.split('/')[1])
-    real_date = tanggal
-
     try:
-        # os.rename(file_report, file_report)
+        if is_grouped == 0:
+            datas = grouping_daily_monitor(
+                file_data=file_data, save_grouping=False, saved_as='', tanggal=tgl)
+        else:
+            datas = pd.read_excel(file_data)
+
+        real_date = int(tgl.split('/')[1])
 
         # Do process for every sheet in File Report
         for i in range(0, 12):
@@ -219,10 +214,6 @@ def gabung_cabang(file_data, file_report, tgl, saved_as, over_month, is_grouped)
         app.quit()
         showinfo(title="Message",
                  message=f"Proses selesai \n Hasil disimpan di: \n {saved_as}")
-    except OSError:
-        app.quit()
-        showinfo(title="Message",
-                 message="File excel sedang dibuka / digunakan oleh proses lain.")
     except Exception as e:
         target_workbook.close()
         app.quit()
@@ -232,13 +223,12 @@ def gabung_cabang(file_data, file_report, tgl, saved_as, over_month, is_grouped)
 
 
 def gabung_customer(file_data, file_report, tgl, saved_as, over_month, is_grouped):
-    tanggal = int(tgl.split('/')[1])
-    real_date = tanggal
-
     app = xl.App(visible=False)
     target_workbook = xl.Book(file_report)
 
     try:
+        real_date = int(tgl.split('/')[1])
+
         processed_data = counting_customer(
             file_data=file_data, date=tgl, is_grouped=is_grouped)
         count_data = processed_data[1]
@@ -466,10 +456,6 @@ def gabung_customer(file_data, file_report, tgl, saved_as, over_month, is_groupe
         target_workbook.close()
         showinfo(title="Message",
                  message=f"Proses selesai \n Hasil disimpan di: \n {saved_as}")
-    except OSError:
-        app.quit()
-        showinfo(title="Message",
-                 message="File excel sedang dibuka / digunakan oleh proses lain.")
     except Exception as e:
         target_workbook.close()
         app.quit()

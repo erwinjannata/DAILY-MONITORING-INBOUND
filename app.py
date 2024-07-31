@@ -134,7 +134,7 @@ check_label_month = tk.Checkbutton(
     root, text="Data bulan sebelumnya", background="white", variable=over_month, onvalue=1, offvalue=0)
 check_label_month.pack(pady=5, padx=10, anchor="w")
 
-label2 = ttk.Label(root, text="3. File excel data/rumus", background="white", font="calibri 11 bold").pack(
+label2 = ttk.Label(root, text="3. File excel data", background="white", font="calibri 11 bold").pack(
     fill="x", padx=10, pady=5)
 
 label_name1 = ttk.Label(root, textvariable=file_data_name, background="white").pack(
