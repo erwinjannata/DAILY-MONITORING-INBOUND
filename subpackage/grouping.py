@@ -22,7 +22,7 @@ def grouping_daily_monitor(file_data, tanggal, saved_as, save_grouping):
              'Receiver Phone', 'Receiving Date', 'Hawb Branch Origin', 'Hawb Origin', 'Hawb Branch Destination', 'Hawb Amount', 'Hawb Packing', 'Hawb Cancel',
              'Hawb Type', 'Hawb Cust Type', 'Hawb Payment Type', 'Hawb Cust NA', 'Hawb Regional Dest.', 'Hawb Ring Dest.', 'Manifest UID', 'Zone', 'HVO No',
              'HVO Date', 'HVO Zone Dest', 'DO No', 'DO Date', 'RDO No', 'RDO Date', 'Pra Runsheet No', 'Pra Runsheet Date', 'Pra Runsheet Courier', 'DO',
-            #  'First Runsheet Date', 'First Status', 'Second Runsheet Date', 'Second Status', 'Last Runsheet Date', 'Last Status'
+             'First Runsheet Date', 'First Status', 'Second Runsheet Date', 'Second Status', 'Last Runsheet Date', 'Last Status'
              ],
             axis=1, inplace=True)
 
