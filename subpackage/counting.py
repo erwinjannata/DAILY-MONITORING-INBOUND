@@ -207,7 +207,11 @@ def counting_customer(file_data, date, is_grouped):
         # Total Nominal COD
         cod_amount = df_cnote.loc[(df_cnote['Manifest Bag No'] == datetime.strptime(
             date, '%m/%d/%Y')) & (df_cnote['Hawb PCS'] == nama_zona) & (df_cnote['COD flag'] == 'Y'), 'COD amount'].sum()
-        all_cod.append([ship_cod, cod_amount])
+
+        # Failed COD Amount
+        failed_cod_amount = df_cnote.loc[(df_cnote['Manifest Bag No'] == (datetime.strptime(
+            date, '%m/%d/%Y') - timedelta(days=16)).strftime('%#m/%#d/%Y')) & (df_cnote['Hawb PCS'] == nama_zona) & (df_cnote['COD flag'] == 'Y') & (df_cnote['Status group'] == "RETURN"), 'COD amount'].sum()
+        all_cod.append([ship_cod, cod_amount, failed_cod_amount])
 
     # ---------- LAZADA, ORDIVO, TOKOPEDIA ----------
     whole_cod = []
@@ -344,38 +348,38 @@ def counting_customer(file_data, date, is_grouped):
 
                 # Total Connote
                 cust_total = len(df_cnote[(df_cnote['Manifest Bag No'] == (datetime.strptime(date, '%m/%d/%Y') - timedelta(
-                    days=hari)).strftime('%#m/%#d/%Y')) & (df_cnote['Hawb PCS'] == nama_zona) & (df_cnote['Hawb Customer Name'] == customer)])
+                    days=hari_ref)).strftime('%#m/%#d/%Y')) & (df_cnote['Hawb PCS'] == nama_zona) & (df_cnote['Hawb Customer Name'] == customer)])
 
                 # UnRunsheet
-                cust_unrunsheet = len(df_cnote[(df_cnote['Manifest Bag No'] == (datetime.strptime(date, '%m/%d/%Y') - timedelta(days=hari)).strftime(
+                cust_unrunsheet = len(df_cnote[(df_cnote['Manifest Bag No'] == (datetime.strptime(date, '%m/%d/%Y') - timedelta(days=hari_ref)).strftime(
                     '%#m/%#d/%Y')) & (df_cnote['Hawb PCS'] == nama_zona) & (df_cnote['Status group'] == 'UNRUNSHEET') & (df_cnote['Hawb Customer Name'] == customer)])
 
                 # Sukses
-                cust_sukses = len(df_cnote[(df_cnote['Manifest Bag No'] == (datetime.strptime(date, '%m/%d/%Y') - timedelta(days=hari)).strftime('%#m/%#d/%Y')) & (
+                cust_sukses = len(df_cnote[(df_cnote['Manifest Bag No'] == (datetime.strptime(date, '%m/%d/%Y') - timedelta(days=hari_ref)).strftime('%#m/%#d/%Y')) & (
                     df_cnote['Hawb PCS'] == nama_zona) & (df_cnote['Status group'] == 'DELIVERED') & (df_cnote['Hawb Customer Name'] == customer)])
 
                 # CR
-                cust_cr = len(df_cnote[(df_cnote['Manifest Bag No'] == (datetime.strptime(date, '%m/%d/%Y') - timedelta(days=hari)).strftime('%#m/%#d/%Y')) & (
+                cust_cr = len(df_cnote[(df_cnote['Manifest Bag No'] == (datetime.strptime(date, '%m/%d/%Y') - timedelta(days=hari_ref)).strftime('%#m/%#d/%Y')) & (
                     df_cnote['Hawb PCS'] == nama_zona) & (df_cnote['Status group'] == 'CUSTOMER REQUEST') & (df_cnote['Hawb Customer Name'] == customer)])
 
                 # Undel
-                cust_undel = len(df_cnote[(df_cnote['Manifest Bag No'] == (datetime.strptime(date, '%m/%d/%Y') - timedelta(days=hari)).strftime('%#m/%#d/%Y')) & (
+                cust_undel = len(df_cnote[(df_cnote['Manifest Bag No'] == (datetime.strptime(date, '%m/%d/%Y') - timedelta(days=hari_ref)).strftime('%#m/%#d/%Y')) & (
                     df_cnote['Hawb PCS'] == nama_zona) & (df_cnote['Status group'] == 'UNDELIVERY') & (df_cnote['Hawb Customer Name'] == customer)])
 
                 # Unstatus
-                cust_unstatus = len(df_cnote[(df_cnote['Manifest Bag No'] == (datetime.strptime(date, '%m/%d/%Y') - timedelta(days=hari)).strftime(
+                cust_unstatus = len(df_cnote[(df_cnote['Manifest Bag No'] == (datetime.strptime(date, '%m/%d/%Y') - timedelta(days=hari_ref)).strftime(
                     '%#m/%#d/%Y')) & (df_cnote['Hawb PCS'] == nama_zona) & (df_cnote['Status group'] == 'OPEN') & (df_cnote['Hawb Customer Name'] == customer)])
 
                 # WH1
-                cust_wh1 = len(df_cnote[(df_cnote['Manifest Bag No'] == (datetime.strptime(date, '%m/%d/%Y') - timedelta(days=hari)).strftime(
+                cust_wh1 = len(df_cnote[(df_cnote['Manifest Bag No'] == (datetime.strptime(date, '%m/%d/%Y') - timedelta(days=hari_ref)).strftime(
                     '%#m/%#d/%Y')) & (df_cnote['Hawb PCS'] == nama_zona) & (df_cnote['Status group'] == 'WH1') & (df_cnote['Hawb Customer Name'] == customer)])
 
                 # IRREGULARITY
-                cust_irreg = len(df_cnote[(df_cnote['Manifest Bag No'] == (datetime.strptime(date, '%m/%d/%Y') - timedelta(days=hari)).strftime('%#m/%#d/%Y')) & (
+                cust_irreg = len(df_cnote[(df_cnote['Manifest Bag No'] == (datetime.strptime(date, '%m/%d/%Y') - timedelta(days=hari_ref)).strftime('%#m/%#d/%Y')) & (
                     df_cnote['Hawb PCS'] == nama_zona) & (df_cnote['Status group'] == 'IRREGULARITY') & (df_cnote['Hawb Customer Name'] == customer)])
 
                 # RETURN
-                cust_return = len(df_cnote[(df_cnote['Manifest Bag No'] == (datetime.strptime(date, '%m/%d/%Y') - timedelta(days=hari)).strftime(
+                cust_return = len(df_cnote[(df_cnote['Manifest Bag No'] == (datetime.strptime(date, '%m/%d/%Y') - timedelta(days=hari_ref)).strftime(
                     '%#m/%#d/%Y')) & (df_cnote['Hawb PCS'] == nama_zona) & (df_cnote['Status group'] == 'RETURN') & (df_cnote['Hawb Customer Name'] == customer)])
 
                 # BREACH

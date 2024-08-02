@@ -291,11 +291,15 @@ def gabung_customer(file_data, file_report, tgl, saved_as, over_month, is_groupe
                 sum_irreg = 0
                 sum_return = 0
                 sum_breach = 0
+                sum_failed_amount = 0
 
                 per_sukses_col_position = 11 if hari != 10 else 13
                 per_unrunsheet_col_position = 12 if hari != 10 else 14
                 per_return_col_position = 13 if hari != 10 else 15
-                per_failed_col_position = 14 if hari != 10 else 18
+                if hari != 10:
+                    per_failed_col_position = 14
+                else:
+                    per_failed_col_position = 18 if i != 3 else 19
 
                 unstatus_col_position = 9 if hari != 10 else 10
                 return_col_position = 10 if hari != 10 else 11
@@ -370,6 +374,7 @@ def gabung_customer(file_data, file_report, tgl, saved_as, over_month, is_groupe
                         if hari == 10:
                             target_worksheet[(cell_row + zona), 17 + (merged_col * hari)].value = (
                                 count_data[hari][i][zona][8] / count_data[hari][i][zona][0]) if count_data[hari][i][zona][0] != 0 else 0
+
                         # % Failure
                         failure = (
                             count_data[hari][i][zona][1] +
@@ -383,6 +388,18 @@ def gabung_customer(file_data, file_report, tgl, saved_as, over_month, is_groupe
                             failure_final / count_data[hari][i][zona][0]) if count_data[hari][i][zona][0] != 0 else 0
                         target_worksheet[(
                             cell_row + zona), per_failed_col_position + (merged_col * hari)].value = perc_failed
+
+                        # Cnote Failure (only in COD Sheet)
+                        if hari == 10 and i == 3:
+                            target_worksheet[(
+                                cell_row + zona), 18 + (merged_col * hari)].value = failure_final
+
+                        # Failure COD Amount (only in COD Sheet)
+                        if hari == 10 and i == 3:
+                            target_worksheet[(
+                                cell_row + zona), 20 + (merged_col * hari)].value = cod_data[0][3][zona][2]
+
+                        sum_failed_amount += cod_data[0][3][zona][2]
 
                     # Count Sum value of all Zona
                     # Sum Total Cnote
@@ -411,6 +428,11 @@ def gabung_customer(file_data, file_report, tgl, saved_as, over_month, is_groupe
                     target_worksheet[(cell_row + 4), return_col_position +
                                      (merged_col * hari)].value = sum_return
 
+                    # Sum Breach (Fill only on H>15)
+                    if hari == 10:
+                        target_worksheet[(cell_row + 4), 12 +
+                                         (merged_col * hari)].value = sum_breach
+
                     # Count % Sum value of all Zona
                     # % Sum Sukses
                     target_worksheet[(cell_row + 4), per_sukses_col_position + (merged_col * hari)].value = (
@@ -436,6 +458,16 @@ def gabung_customer(file_data, file_report, tgl, saved_as, over_month, is_groupe
                         sum_failed + sum_irreg + sum_breach) if hari == 10 else sum_failed
                     target_worksheet[(cell_row + 4), per_failed_col_position + (merged_col * hari)].value = (
                         sum_failed_final / sum_total_cnote) if sum_total_cnote != 0 else 0
+
+                    # Total Cnote Failure (only in COD Sheet)
+                    if hari == 10 and i == 3:
+                        target_worksheet[(
+                            cell_row + 4), 18 + (merged_col * hari)].value = sum_failed_final
+
+                    # Total Failed COD Amount (only in COD Sheet)
+                    if hari == 10 and i == 3:
+                        target_worksheet[(
+                            cell_row + 4), 20 + (merged_col * hari)].value = sum_failed_amount
 
                     if hari == 7:
                         cell_row -= (merged_row * 3)
