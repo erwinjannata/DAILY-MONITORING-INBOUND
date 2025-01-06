@@ -37,7 +37,7 @@ def counting_cabang(df_cnote, sheet, nowIndex, date):
             ship_cod = len(df_cnote[(df_cnote['Hawb Destination Name'] == nama_cabang[nowIndex]) & (df_cnote['Hawb PCS'] == nama_zona) & (
                 df_cnote['COD flag'] == 'Y') & (df_cnote['Hawb Customer Name'] == customer) & (df_cnote['Manifest Bag No'] == datetime.strptime(date, '%m/%d/%Y'))])
             # Total Nominal COD
-            cod_amount = cod_amount = df_cnote.loc[(df_cnote['Manifest Bag No'] == datetime.strptime(date, '%m/%d/%Y')) &
+            cod_amount = df_cnote.loc[(df_cnote['Manifest Bag No'] == datetime.strptime(date, '%m/%d/%Y')) &
                                                    (df_cnote['Hawb Destination Name'] == nama_cabang[nowIndex]) & (df_cnote['Hawb PCS'] == nama_zona) & (df_cnote['COD flag'] == 'Y') & (df_cnote['Hawb Customer Name'] == customer), 'COD amount'].sum()
             cust_cod.append([ship_cod, cod_amount])
         whole_cod.append(cust_cod)

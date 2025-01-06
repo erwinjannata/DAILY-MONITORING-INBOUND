@@ -1,40 +1,24 @@
-# import xlwings as xl
+import pandas as pd
 
-# app = xl.App(visible=False)
-# wb = xl.Book(r'D:\MASTER.xlsx')
-# ws = wb.sheets[0]
+customer = {}
+customer_name = []
 
-# print(ws["C4"].value)
+df = pd.read_excel(
+    r"C:\Users\Lenovo\Documents\TOTAL TARIKAN INBOUND TANGGAL 17 - 02 JANUARI 2025.xlsx", nrows=100)
 
-# wb.close()
-# app.quit()
+df_customer = pd.read_excel(
+    r"C:\ERWIN\App Library\Python App\Daily Monitor Inbound\INBOUND REFS.xlsx", sheet_name='CUSTOMER')
 
-# a = []
+# Load Reference Table for CUSTOMER
+for i in range(0, df_customer.shape[0]):
+    customer[str(df_customer['No. Account2'][i])
+             ] = df_customer['Cust Grouping'][i]
 
-# list = []
+for index in range(0, 10):
+    # HAWB Customer Name
+    try:
+        customer_name.append(customer[str(df['Hawb Customer'][index])])
+    except:
+        customer_name.append('#N/A')
 
-# list.append([5, 1, 2])
-# list.append([1, 2, 3])
-# list.append([3, 1, 2])
-# list.append([0, 0, 0])
-
-# jumlah_zona = 3
-
-# for i in range(jumlah_zona):
-#     print("Y")
-
-
-# def fun():
-#     a = 20
-#     b = 100
-
-#     return [a, b]
-
-
-# data = fun()[1]
-
-# print(data)
-
-zone = ['A', 'B', 'C', 'D']
-
-print(zone[0])
+print(customer_name)

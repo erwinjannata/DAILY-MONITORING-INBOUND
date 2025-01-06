@@ -10,7 +10,7 @@ from subpackage.fungsi import gabung_cabang, gabung_customer
 root = tk.Tk()
 root.configure(bg="white")
 root.geometry("350x515")
-root.title("Daily Monitoring Inbound v.2.1")
+root.title("Daily Monitoring Inbound v.2.2")
 
 file_data = ""
 file_report = ""
